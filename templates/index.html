@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Backtest App</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <!-- <button id="download-report">Download Report</button>
+    <a href="/show_plot">Show Plot</a> -->
+    
+    <h1>Matplotlib Plot in Flask</h1>
+    
+    <div class="container">
+        <h1>Backtest App</h1>
+        <form id="backtest-form">
+            <label for="symbol">Symbol:</label>
+            <input type="text" id="symbol" name="symbol" required><br>
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date" name="startDate" required><br>
+            <label for="end-date">End Date:</label>
+            <input type="date" id="end-date" name="endDate" required><br>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        //backtest-from id에 있는 submit를 누르면 실행되도록한다.
+        document.getElementById('backtest-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const symbol = document.getElementById('symbol').value;
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+
+            fetch('/backtest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ symbol, startDate, endDate }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                //result id 위치를 가져온다.
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<h2>Backtest Result</h2><dir>${JSON.stringify(data, null, 2)}</dir>`;
+
+                //div라는 요소를 만들어서 백테스트 결과를 html 안에 넣는다.
+                const iframeDiv = document.createElement('div');
+                iframeDiv.className = "center";
+                iframeDiv.innerHTML = `
+                    <iframe src="{{ url_for('static', filename='backtest_report.html') }}" width="600" height="400" frameborder="0"></iframe>
+                `;
+                //reulst id 안에 넣는다.
+                resultDiv.appendChild(iframeDiv);
+                
+                // Adding the download report button and show plot link after the iframe
+                const buttonDiv = document.createElement('div');
+                buttonDiv.innerHTML = `
+                    <button id="download-report">Download Report</button>
+                    <a href="/show_plot">Show Plot</a>
+                    <a href="/showReport">Show Report</a>
+                `;
+                //reulst id 안에 넣는다.
+                resultDiv.appendChild(buttonDiv);
+
+                //download-report id를 가지고 와서 거기에 click이벤트를 넣고 click을 하면 /download_report로 가게 한다.
+                //최종적으로는 report.html을 다운받을 수 있게 한다.
+                document.getElementById('download-report').addEventListener('click', function() {
+                    window.location.href = '/download_report';
+        });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            
+        });
+        // document.getElementById('download-report').addEventListener('click', function() {
+        //     window.location.href = '/download_report';
+        // });
+        
+    </script>
+    <!-- <div class = "center">
+        <iframe src="{{ url_for('static', filename='backtest_report.html') }}" width="600" height="400" frameborder="0"></iframe>
+    </div> -->
+</body>
+</html>
