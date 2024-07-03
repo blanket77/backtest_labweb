@@ -1,6 +1,4 @@
 import pandas as pd
-import yfinance as yf
-import pymysql
 from sqlalchemy import create_engine
 import matplotlib.pyplot as plt
 import numpy as np

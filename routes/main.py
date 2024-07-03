@@ -4,6 +4,8 @@ from services.backtest_service import perform_backtest
 from services.backtests.Static_Asset_Allocation import Static_Asset_Allocation
 import os
 from werkzeug.utils import secure_filename
+from services.day_run import *
+import json
 
 # 허용된 파일 확장자를 정의하는 함수
 def allowed_file(filename):
@@ -56,6 +58,18 @@ def backtest():
     results = Static_Asset_Allocation(symbol, start_date, end_date)
 
     return jsonify(results)
+
+@main_bp.route('/day_backtest', methods=['POST'])
+def day_backtest():
+    run_portfolio_analysis()
+    json_file_path = os.path.join(current_app.root_path, 'Record/stock_rate.json')
+
+    # stock_rate.json 파일을 열고 JSON 데이터를 로드합니다.
+    with open(json_file_path, 'r') as file:
+        stock_data = json.load(file)
+
+    # JSON 데이터를 클라이언트에 반환합니다.
+    return jsonify(stock_data), 200
 
 
 @main_bp.route('/download_report')

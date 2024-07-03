@@ -4,15 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File</title>
+    <link rel="stylesheet" href="../static/styles_upload.css">
     <script>
         function showResult() {
-            const iframeDiv = document.createElement('div');
-            iframeDiv.className = "center";
-            iframeDiv.innerHTML = `
-                <iframe src="{{ url_for('static', filename='backtest_report.html') }}" width="600" height="400" frameborder="0"></iframe>
-            `;
-            document.body.appendChild(iframeDiv);
+            fetch('/day_backtest', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();  // Assuming the response is in JSON format; adjust as needed
+            })
+            .then(data => {
+                const iframeDiv = document.createElement('div');
+                iframeDiv.className = "center";
+                iframeDiv.innerHTML = `
+                    <iframe src="{{ url_for('static', filename='day_report.html') }}" width="1500" height="900" frameborder="0"></iframe>
+                `;
+                document.body.appendChild(iframeDiv);
+
+                // 데이터를 수익률에 따라 정렬
+                const sortedData = Object.entries(data).sort((a, b) => a[1].return_rate - b[1].return_rate);
+                const sortedData_up = Object.entries(data).sort((a, b) => b[1].return_rate -  a[1].return_rate);
+                // 상위 5개와 하위 5개 추출
+                const top5 = sortedData_up.slice(0, 5);
+                const bottom5 = sortedData.slice(0, 5);
+
+                // 테이블 생성 함수 호출
+                createTable('Top 5 Stocks', top5);
+                createTable('Bottom 5 Stocks', bottom5);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
         }
+        function createTable(title, data) {
+            const tableDiv = document.createElement('div');
+            tableDiv.className = "stock-table";
+            
+            // 제목 추가
+            const header = document.createElement('h2');
+            header.textContent = title;
+            tableDiv.appendChild(header);
+            
+            // 테이블 생성
+            const table = document.createElement('table');
+            table.border = "1";
+            
+            // 테이블 헤더 생성
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const th1 = document.createElement('th');
+            th1.textContent = "Stock";
+            const th2 = document.createElement('th');
+            th2.textContent = "Return Rate";
+            headerRow.appendChild(th1);
+            headerRow.appendChild(th2);
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            // 테이블 바디 생성
+            const tbody = document.createElement('tbody');
+            data.forEach(([stock, {return_rate}]) => {
+                const row = document.createElement('tr');
+                const td1 = document.createElement('td');
+                td1.textContent = stock;
+                const td2 = document.createElement('td');
+                td2.textContent = return_rate;
+                row.appendChild(td1);
+                row.appendChild(td2);
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+            
+            // 테이블을 div에 추가
+            tableDiv.appendChild(table);
+            
+            // div를 문서에 추가
+            document.body.appendChild(tableDiv);
+        }
+
 
         function showClickMeButton() {
             if (!document.getElementById("clickMeButton")) {
@@ -24,12 +96,14 @@
                 const button = document.createElement("button");
                 button.innerHTML = "Click Me!";
                 button.id = "clickMeButton";
+
                 button.onclick = showResult;
 
                 document.body.appendChild(message);
                 document.body.appendChild(button);
             }
         }
+
 
         async function handleFormSubmit(event) {
             event.preventDefault(); //폼 제출 이벤트의 경우, 브라우저가 폼을 제출하고 페이지를 새로 고침하는 기본 동작을 방지
@@ -52,6 +126,7 @@
                 console.error('Error:', error);
             }
         }
+
     </script>
 </head>
 <body>

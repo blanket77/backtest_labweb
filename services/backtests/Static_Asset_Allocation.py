@@ -1,8 +1,6 @@
 from sqlalchemy import create_engine
 import pandas as pd
 import bt
-import yfinance as yf
-import pymysql
 import io
 import contextlib
 import quantstats as qs
@@ -135,7 +133,6 @@ def Static_Asset_Allocation(tickers, start_date, end_date):
 
     # HTML 파일로 저장
     fig.write_html("static/backtest_report.html")
-    fig.write_html("templates/backtest_report.html")
 
     print("Backtest report saved as backtest_report.html")
 
@@ -166,3 +163,6 @@ def Static_Asset_Allocation(tickers, start_date, end_date):
 
     result_string = result_string.replace('\n', '<br>')
     return result_string
+
+if __name__ == '__main__':
+    Static_Asset_Allocation(['SPY', 'TLT', 'IEF', 'GLD', 'DBC'], '2020-04-30', '2022-04-30')
