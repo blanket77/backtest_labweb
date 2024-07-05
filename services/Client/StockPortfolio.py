@@ -276,7 +276,7 @@ class StockPortfolio:
             cash_plus_stock_values.append(data['cash_plus_stock'])
 
             current_value = data['cash_plus_stock']
-            returns.append((current_value - self.initial_cash) / self.initial_cash * 100)  # 퍼센트로 수익률 계산
+            returns.append(round((current_value - self.initial_cash) / self.initial_cash * 100, 2))
 
             for ticker, stock_data in data['stocks'].items():
                 if stock_data['quantity_buy'] > 0:
@@ -288,14 +288,17 @@ class StockPortfolio:
                         sell_annotations[date] = []
                     sell_annotations[date].append(f'{ticker}: {stock_data["quantity_sold"]} (Sell), Return: {stock_data["return_stock_selling"]:.2%}')
 
-        #수익률 계산
+        # 수익률 계산
         spy_price = (spy_price - spy_price[0]) / spy_price[0] * 100
+        spy_price = [round(price, 2) for price in spy_price]
 
         #SPY 수익률과 포트폴리오 수익률을 그래프와 라벨로 표시
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=dates, y=spy_price, mode='lines+markers', name='SPY',
+            hovertemplate='%{x|(%b %d, %Y}, %{y:.2f}%)',  # 날짜, 시간 및 % 기호 추가
             line=dict(color='purple'),  # 선 색깔을 보라색으로 설정
+            hovertext=[f"{price}%" for price in spy_price],  # Hover 텍스트에 % 기호 추가
             hoverlabel=dict(font=dict(size=16)),  # Set hover text font size
             showlegend=True
         ))
@@ -303,6 +306,8 @@ class StockPortfolio:
         # 포트폴리오 수익률 그래프 추가
         fig.add_trace(go.Scatter(
             x=dates, y=returns, mode='lines+markers', name='My',
+            hovertemplate='%{x|(%b %d, %Y}, %{y:.2f}%)',  # 날짜, 시간 및 % 기호 추가
+            hovertext=[f"{price}%" for price in returns],  # Hover 텍스트에 % 기호 추가
             hoverlabel=dict(font=dict(size=16)),  # Set hover text font size
             showlegend=True
         ))
@@ -311,9 +316,10 @@ class StockPortfolio:
             fig.add_trace(go.Scatter(
                 x=[date], y=[returns[dates.index(date)]],
                 mode='markers', name='Buy',
-                marker=dict(color='red', symbol='triangle-up', size = 10),
+                marker=dict(color='red', symbol='triangle-up', size=10),
                 text='<br>'.join(annotations),
                 hoverlabel=dict(font=dict(size=25)),
+                hovertemplate='%{x|(%b %d, %Y}, %{y:.2f}%)' + '<br>' + '<br>'.join(annotations),
                 showlegend=False
             ))
 
@@ -321,20 +327,21 @@ class StockPortfolio:
             fig.add_trace(go.Scatter(
                 x=[date + timedelta(minutes=400)], y=[returns[dates.index(date)]],
                 mode='markers', name='Sell',
-                marker=dict(color='blue', symbol='triangle-down', size = 10),
+                marker=dict(color='blue', symbol='triangle-down', size=10),
                 text='<br>'.join(annotations),
                 hoverlabel=dict(font=dict(size=25)),
+                hovertemplate='%{x|(%b %d, %Y}, %{y:.2f})%' + '<br>' + '<br>'.join(annotations),
                 showlegend=False
             ))
 
         fig.update_layout(title='Rate of return',
                         xaxis_title='Date',
-                        yaxis_title='Rate of return',
+                        yaxis_title='Rate of return (%)',
                         showlegend=True,
                         font=dict(size=25),  # Increase the font size for title, axis titles, and legend
                         title_font=dict(size=40),  # Increase the title font size
                         xaxis=dict(title=dict(font=dict(size=30))),  # Increase the x-axis title font size
-                        yaxis=dict(title=dict(font=dict(size=30))),  # Increase the y-axis title font size
+                        yaxis=dict(title=dict(font=dict(size=30))),  # Increase the y-axis title font size and add % symbol to tick format
                         legend=dict(font=dict(size=40))  # 범례 글꼴 크기 변경               
         )
         fig.write_html("static/day_report.html")
@@ -408,9 +415,9 @@ class StockPortfolio:
         # 'Buy Frequency'로 정렬
         sorted_df = merged_df.sort_values(by='Retun_less_0per Frequency', ascending=False)
 
-        # 결과 출력
-        print("Stocks with non-zero quantity_buy and quantity_sold:")
-        print(sorted_df)
+        # # 결과 출력
+        # print("Stocks with non-zero quantity_buy and quantity_sold:")
+        # print(sorted_df)
 
         # sorted_df를 CSV 파일로 저장
-        sorted_df.to_csv('Record/sorted_stocks.csv', index=False)
+        sorted_df.to_json('Record/sorted_stocks.json', orient='records')

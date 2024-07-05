@@ -1,4 +1,4 @@
-from flask import request, jsonify, render_template, send_from_directory, request,  current_app, redirect, url_for
+from flask import request, jsonify, render_template, send_from_directory, request,  current_app, redirect, url_for, render_template_string
 from . import main_bp
 from services.backtest_service import perform_backtest
 from services.backtests.Static_Asset_Allocation import Static_Asset_Allocation
@@ -71,10 +71,24 @@ def day_backtest():
     # JSON 데이터를 클라이언트에 반환합니다.
     return jsonify(stock_data), 200
 
+@main_bp.route('/sorted_stocks', methods=['POST'])
+def sorted_stocks():
+    json_file_path = os.path.join(current_app.root_path, 'Record/sorted_stocks.json')
+
+    # stock_rate.json 파일을 열고 JSON 데이터를 로드합니다.
+    with open(json_file_path, 'r') as file:
+        sorted_stock_data = json.load(file)
+
+    # JSON 데이터를 클라이언트에 반환합니다.
+    return jsonify(sorted_stock_data), 200
+
+
 
 @main_bp.route('/download_report')
 def download_report():
     return send_from_directory('static', 'report.html', as_attachment=True)
+
+
 
 # @main_bp.route('/plot')
 # def plot():

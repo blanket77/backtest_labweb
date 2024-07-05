@@ -34,7 +34,46 @@
                 // 테이블 생성 함수 호출
                 createTable('Top 5 Stocks', top5);
                 createTable('Bottom 5 Stocks', bottom5);
+            // 첫 번째 fetch가 완료된 후 두 번째 fetch 실행
+                return fetch('/sorted_stocks', {
+                    method: 'POST'
+                });
             })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();  // 서버로부터 JSON 형식의 응답을 받음
+            })
+            .then(data => {
+            const topFive = data.slice(0, 5);  // 상위 5개 데이터 추출
+            let tableHtml = '<table border="1"><tr>';
+
+            // 첫 번째 객체의 키를 기반으로 테이블 헤더 생성
+            if (topFive.length > 0) {
+                const headers = ['Stock', 'Buy Frequency', 'Sell Frequency', 'Total Frequency', 
+                                'Retun_less_0per Frequency', 'Retun_less_4per Frequency', 
+                                'Retun_less_8per Frequency', 'Retun_less_12per Frequency'];
+                
+                // 헤더 생성
+                headers.forEach(key => {
+                    tableHtml += `<th>${key}</th>`;
+                });
+                tableHtml += '</tr>';
+
+                // 테이블 행 생성
+                topFive.forEach(item => {
+                    tableHtml += '<tr>';
+                    headers.forEach(key => {
+                        tableHtml += `<td>${item[key]}</td>`;
+                    });
+                    tableHtml += '</tr>';
+                });
+            }
+
+            tableHtml += '</table>';
+            document.body.innerHTML += tableHtml;
+        })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
@@ -71,7 +110,7 @@
                 const td1 = document.createElement('td');
                 td1.textContent = stock;
                 const td2 = document.createElement('td');
-                td2.textContent = return_rate;
+                td2.textContent = (return_rate*100).toFixed(2) + '%';  // 소수점 둘째 자리까지 반올림하고 % 기호 추가
                 row.appendChild(td1);
                 row.appendChild(td2);
                 tbody.appendChild(row);
@@ -84,8 +123,6 @@
             // div를 문서에 추가
             document.body.appendChild(tableDiv);
         }
-
-
         function showClickMeButton() {
             if (!document.getElementById("clickMeButton")) {
                 const message = document.createElement("div");
@@ -103,8 +140,6 @@
                 document.body.appendChild(button);
             }
         }
-
-
         async function handleFormSubmit(event) {
             event.preventDefault(); //폼 제출 이벤트의 경우, 브라우저가 폼을 제출하고 페이지를 새로 고침하는 기본 동작을 방지
 
@@ -126,7 +161,8 @@
                 console.error('Error:', error);
             }
         }
-
+    
+        
     </script>
 </head>
 <body>
@@ -135,5 +171,6 @@
         <input type="file" name="file">
         <input type="submit" value="Upload">
     </form>
+    <div id="tableContainer"></div>
 </body>
 </html>
