@@ -330,7 +330,7 @@ class StockPortfolio:
                 marker=dict(color='blue', symbol='triangle-down', size=10),
                 text='<br>'.join(annotations),
                 hoverlabel=dict(font=dict(size=25)),
-                hovertemplate='%{x|(%b %d, %Y}, %{y:.2f})%' + '<br>' + '<br>'.join(annotations),
+                hovertemplate='%{x|(%b %d, %Y}, %{y:.2f}%)' + '<br>' + '<br>'.join(annotations),
                 showlegend=False
             ))
 
@@ -390,10 +390,10 @@ class StockPortfolio:
         # 데이터프레임 생성
         quantity_buy_nonzero_df = pd.DataFrame(quantity_buy_nonzero_counter.items(), columns=['Stock', 'Buy Frequency'])
         quantity_sold_nonzero_df = pd.DataFrame(quantity_sold_nonzero_counter.items(), columns=['Stock', 'Sell Frequency'])
-        Retun_less_0per_df = pd.DataFrame(Retun_less_0per_counter.items(), columns=['Stock', 'Retun_less_0per Frequency'])
-        Retun_less_4per_df = pd.DataFrame(Retun_less_4per_counter.items(), columns=['Stock', 'Retun_less_4per Frequency'])
-        Retun_less_8per_df = pd.DataFrame(Retun_less_8per_counter.items(), columns=['Stock', 'Retun_less_8per Frequency'])
-        Retun_less_12per_df = pd.DataFrame(Retun_less_12per_counter.items(), columns=['Stock', 'Retun_less_12per Frequency'])
+        Retun_less_0per_df = pd.DataFrame(Retun_less_0per_counter.items(), columns=['Stock', 'Retun_less_0% Frequency'])
+        Retun_less_4per_df = pd.DataFrame(Retun_less_4per_counter.items(), columns=['Stock', 'Retun_less_4% Frequency'])
+        Retun_less_8per_df = pd.DataFrame(Retun_less_8per_counter.items(), columns=['Stock', 'Retun_less_8% Frequency'])
+        Retun_less_12per_df = pd.DataFrame(Retun_less_12per_counter.items(), columns=['Stock', 'Retun_less_12% Frequency'])
 
         # 데이터프레임 리스트 생성
         dfs = [quantity_buy_nonzero_df, quantity_sold_nonzero_df, 
@@ -413,7 +413,7 @@ class StockPortfolio:
         merged_df = merged_df[new_cols]  # 새 열 순서로 데이터프레임 재구성
 
         # 'Buy Frequency'로 정렬
-        sorted_df = merged_df.sort_values(by='Retun_less_0per Frequency', ascending=False)
+        sorted_df = merged_df.sort_values(by='Retun_less_0% Frequency', ascending=False)
 
         # # 결과 출력
         # print("Stocks with non-zero quantity_buy and quantity_sold:")

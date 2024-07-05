@@ -31,9 +31,13 @@
                 const top5 = sortedData_up.slice(0, 5);
                 const bottom5 = sortedData.slice(0, 5);
 
+                const tablesContainer = document.createElement('div');
+                tablesContainer.className = 'tables-container';
+                document.body.appendChild(tablesContainer);
+
                 // 테이블 생성 함수 호출
-                createTable('Top 5 Stocks', top5);
-                createTable('Bottom 5 Stocks', bottom5);
+                createTable('Top 5 Stocks', top5, tablesContainer);
+                createTable('Bottom 5 Stocks', bottom5, tablesContainer);
             // 첫 번째 fetch가 완료된 후 두 번째 fetch 실행
                 return fetch('/sorted_stocks', {
                     method: 'POST'
@@ -46,39 +50,66 @@
                 return response.json();  // 서버로부터 JSON 형식의 응답을 받음
             })
             .then(data => {
-            const topFive = data.slice(0, 5);  // 상위 5개 데이터 추출
-            let tableHtml = '<table border="1"><tr>';
+            createLastTable(data); // 예시 데이터를 사용하여 마지막 테이블 생성
 
-            // 첫 번째 객체의 키를 기반으로 테이블 헤더 생성
-            if (topFive.length > 0) {
-                const headers = ['Stock', 'Buy Frequency', 'Sell Frequency', 'Total Frequency', 
-                                'Retun_less_0per Frequency', 'Retun_less_4per Frequency', 
-                                'Retun_less_8per Frequency', 'Retun_less_12per Frequency'];
+            // 폼 생성
+            const form = document.createElement('form');
+            form.className = 'user-form';
+            form.innerHTML = `
+                <label for="stockName">Stock Name:</label>
+                <input type="text" id="stockName" name="stockName">
                 
-                // 헤더 생성
-                headers.forEach(key => {
-                    tableHtml += `<th>${key}</th>`;
-                });
-                tableHtml += '</tr>';
+                <label for="investmentAmount">Investment Amount:</label>
+                <input type="number" id="investmentAmount" name="investmentAmount">
+                
+                <button type="submit">Submit</button>
+            `;
+            document.body.appendChild(form);
 
-                // 테이블 행 생성
-                topFive.forEach(item => {
-                    tableHtml += '<tr>';
-                    headers.forEach(key => {
-                        tableHtml += `<td>${item[key]}</td>`;
-                    });
-                    tableHtml += '</tr>';
-                });
-            }
+            // 폼 제출 이벤트 처리
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const stockName = document.getElementById('stockName').value;
+                const investmentAmount = document.getElementById('investmentAmount').value;
+                
+                // 여기에서 폼 데이터를 서버로 전송하거나 추가 작업을 수행할 수 있습니다.
+                console.log('Stock Name:', stockName);
+                console.log('Investment Amount:', investmentAmount);
 
-            tableHtml += '</table>';
-            document.body.innerHTML += tableHtml;
-        })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
+                // 예: 폼 데이터를 서버로 POST 요청으로 전송
+                fetch('/submit_form', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        stockName: stockName,
+                        investmentAmount: investmentAmount
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Form submission response:', data);
+                    // 서버 응답을 바탕으로 추가 작업을 수행할 수 있습니다.
+                })
+                .catch(error => {
+                    console.error('There was a problem with the form submission:', error);
+                });
             });
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+
+            
         }
-        function createTable(title, data) {
+        function createTable(title, data, container) {
             const tableDiv = document.createElement('div');
             tableDiv.className = "stock-table";
             
@@ -121,7 +152,7 @@
             tableDiv.appendChild(table);
             
             // div를 문서에 추가
-            document.body.appendChild(tableDiv);
+            container.appendChild(tableDiv);
         }
         function showClickMeButton() {
             if (!document.getElementById("clickMeButton")) {
@@ -161,7 +192,90 @@
                 console.error('Error:', error);
             }
         }
-    
+        // 테이블을 정렬하는 함수
+        function sortTable(table, column, ascending) {
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            // 열 데이터를 숫자 또는 문자열로 비교
+            const compare = (rowA, rowB) => {
+                const cellA = rowA.children[column].innerText;
+                const cellB = rowB.children[column].innerText;
+                const a = isNaN(cellA) ? cellA : Number(cellA);
+                const b = isNaN(cellB) ? cellB : Number(cellB);
+
+                return (a > b ? 1 : a < b ? -1 : 0) * (ascending ? 1 : -1);
+            };
+
+            // 행을 정렬
+            rows.sort(compare);
+
+            // 모든 행을 다시 추가하면서 숨김 클래스 제거
+            rows.forEach(row => {
+                row.classList.remove('hidden-row');
+                tbody.appendChild(row);
+            });
+
+            // 상위 5개 행을 제외한 나머지 행 숨기기
+            rows.slice(5).forEach(row => row.classList.add('hidden-row'));
+        }
+
+        // 열 제목에 클릭 이벤트 리스너를 추가하는 함수
+        function makeTableSortable(table) {
+            const headers = table.querySelectorAll('th');
+            headers.forEach((header, index) => {
+                header.addEventListener('click', () => {
+                    const ascending = !header.classList.contains('asc');
+                    headers.forEach(h => h.classList.remove('asc', 'desc'));
+                    header.classList.toggle('asc', ascending);
+                    header.classList.toggle('desc', !ascending);
+                    sortTable(table, index, ascending);
+                });
+            });
+        }
+
+        // 마지막 테이블을 생성하는 함수에 열 제목 클릭 시 정렬 기능 추가
+        // 마지막 테이블을 생성하는 함수에 열 제목 클릭 시 정렬 기능 추가
+        // 테이블을 생성하는 함수
+        function createLastTable(data) {
+            const tableDiv = document.createElement('div');
+            tableDiv.className = "center-table";
+            
+            // 테이블 생성
+            let tableHtml = '<table border="1"><thead><tr>';
+            const headers = ['Stock', 'Buy Frequency', 'Sell Frequency', 'Total Frequency', 
+                            'Retun_less_0% Frequency', 'Retun_less_4% Frequency', 
+                            'Retun_less_8% Frequency', 'Retun_less_12% Frequency'];
+
+            // 헤더 생성
+            headers.forEach(key => {
+                tableHtml += `<th>${key}</th>`;
+            });
+            tableHtml += '</tr></thead><tbody>';
+
+            // 테이블 행 생성
+            data.forEach(item => {
+                tableHtml += '<tr>';
+                headers.forEach(key => {
+                    tableHtml += `<td>${item[key]}</td>`;
+                });
+                tableHtml += '</tr>';
+            });
+
+            tableHtml += '</tbody></table>';
+            tableDiv.innerHTML = tableHtml;
+            document.body.appendChild(tableDiv);
+
+            // 방금 생성한 테이블을 정렬 가능하게 만들기
+            const table = tableDiv.querySelector('table');
+            makeTableSortable(table);
+
+            // 초기 로드 시 상위 5개 행만 보이도록 설정
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            rows.slice(5).forEach(row => row.classList.add('hidden-row'));
+        }
+
         
     </script>
 </head>

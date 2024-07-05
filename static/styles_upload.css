@@ -2,6 +2,23 @@
     margin-right: 20px; /* 오른쪽 마진 추가 */
     margin-bottom: 20px; /* 아래쪽 마진 추가 */
 }
+.tables-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+.center-table {
+    display: flex;
+    justify-content: center;
+}
+
+.hidden-row {
+    display: none;
+}
+
+th {
+    cursor: pointer; /* 열 제목을 클릭 가능하게 변경 */
+}
 
 body {
     font-family: Arial, sans-serif;
@@ -18,10 +35,6 @@ body {
     padding: 20px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
-
-
-
-
 
 input, button {
     padding: 10px;
