@@ -8,7 +8,7 @@ import json
 import os
 from collections import Counter
 from functools import reduce
-
+import plotly.io as pio
 
 buy_commission = 0 
 sell_commission = 0 
@@ -29,7 +29,7 @@ class StockPortfolio:
         engine = create_engine('mysql+pymysql://root:1234@127.0.0.1:3306/stock_db')
         self.stock_price = pd.read_sql('select * from lab_assignment;', con=engine)
         engine.dispose()
-
+        self.fig = go.Figure()
 
     def initialization_stock(self):
 
@@ -155,7 +155,7 @@ class StockPortfolio:
             print(f"Stock {ticker} not found in the portfolio.")
             return None
 
-    def calculate_all_stock_return_rates(self):
+    def calculate_all_stock_return_rates(self, file_name):
         stock_return_rates = {}
         portfolio_copy = copy.deepcopy(self)
 
@@ -177,7 +177,7 @@ class StockPortfolio:
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        file_path = os.path.join(directory, 'stock_rate.json')
+        file_path = os.path.join(directory, file_name)
 
         with open(file_path, 'w') as file:
             json.dump(stock_return_rates, file, indent=4)
@@ -209,12 +209,12 @@ class StockPortfolio:
     def get_daily_history(self):
         return self.daily_history
     
-    def get_daily_history_file(self):
+    def get_daily_history_file(self, file_name):
         directory = './Record'
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        file_path = os.path.join(directory, 'stock_history.json')
+        file_path = os.path.join(directory, file_name)
 
         with open(file_path, 'w') as file:
             json.dump(self.daily_history, file, indent=4)
@@ -257,6 +257,9 @@ class StockPortfolio:
 
         # 날짜 순으로 정렬
         self.daily_history = OrderedDict(sorted(self.daily_history.items()))
+    
+    def previous_fig_json(self, json_path):
+        self.fig = pio.read_json(json_path) 
 
     def plot_rate_of_return_history(self):
         self.fill_missing_dates()  # Fill in missing dates before plotting
@@ -282,74 +285,112 @@ class StockPortfolio:
                 if stock_data['quantity_buy'] > 0:
                     if date not in buy_annotations:
                         buy_annotations[date] = []
-                    buy_annotations[date].append(f'{ticker}: {stock_data["quantity_buy"]} (Buy)')
+                    buy_annotations[date].append(f'{ticker}: {stock_data["quantity_buy"] * stock_data["price"] / data["cash_plus_stock"] * 100 :.1f}%')
                 if stock_data['quantity_sold'] > 0:
                     if date not in sell_annotations:
                         sell_annotations[date] = []
-                    sell_annotations[date].append(f'{ticker}: {stock_data["quantity_sold"]} (Sell), Return: {stock_data["return_stock_selling"]:.2%}')
+                    sell_annotations[date].append(
+                    f'{ticker}: {stock_data["quantity_sold"] * stock_data["price"] / data["cash_plus_stock"] * 100 :.1f}%, '
+                    f'ROI: {stock_data["return_stock_selling"]:.1%}'
+                )
+
+            # 수익률 계산
+            if date in buy_annotations or date in sell_annotations:
+                if date in buy_annotations:
+                    buy_annotations[date].append(f'Cash: {data["cash"] / data["cash_plus_stock"] * 100:.1f}%')
+                    continue
+                if date in sell_annotations:
+                    sell_annotations[date].append(f'Cash: {data["cash"] / data["cash_plus_stock"] * 100:.1f}%')
+
+            # 수익률 계산
 
         # 수익률 계산
         spy_price = (spy_price - spy_price[0]) / spy_price[0] * 100
         spy_price = [round(price, 2) for price in spy_price]
 
         #SPY 수익률과 포트폴리오 수익률을 그래프와 라벨로 표시
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=dates, y=spy_price, mode='lines+markers', name='SPY',
-            hovertemplate='%{x|(%b %d, %Y}, %{y:.2f}%)',  # 날짜, 시간 및 % 기호 추가
-            line=dict(color='purple'),  # 선 색깔을 보라색으로 설정
-            hovertext=[f"{price}%" for price in spy_price],  # Hover 텍스트에 % 기호 추가
-            hoverlabel=dict(font=dict(size=16)),  # Set hover text font size
-            showlegend=True
-        ))
+        spy_trace_exists = any(trace.name == 'SPY' for trace in self.fig.data)
+        
+        existing_names = {trace.name for trace in self.fig.data}
+        i = 1
+        while f'My{i}' in existing_names:
+            i += 1
+
+        if not spy_trace_exists:
+            self.fig.add_trace(go.Scatter(
+                x=dates, y=spy_price, mode='lines+markers', name='SPY',
+                hovertemplate=    
+                        'Date: %{x|%d/%m/%Y}<br>' +
+                        'CR: %{y:.1f}%<br>',
+
+                line=dict(color='purple'),  # 선 색깔을 보라색으로 설정
+                hovertext=[f"{price}%" for price in spy_price],  # Hover 텍스트에 % 기호 추가
+                hoverlabel=dict(font=dict(size=16)),  # Hover 텍스트 폰트 크기 설정
+                showlegend=True
+            ))
 
         # 포트폴리오 수익률 그래프 추가
-        fig.add_trace(go.Scatter(
-            x=dates, y=returns, mode='lines+markers', name='My',
-            hovertemplate='%{x|(%b %d, %Y}, %{y:.2f}%)',  # 날짜, 시간 및 % 기호 추가
+        self.fig.add_trace(go.Scatter(
+            x=dates, y=returns, mode='lines+markers', name=f'My{i}',
+            hovertemplate=    
+                        'Date: %{x|%d/%m/%Y}<br>' +
+                        'CR: %{y:.1f}%<br>',
+                              
             hovertext=[f"{price}%" for price in returns],  # Hover 텍스트에 % 기호 추가
             hoverlabel=dict(font=dict(size=16)),  # Set hover text font size
-            showlegend=True
+            showlegend=True,
+            legendgroup=f'my_group{i}'
         ))
+        
 
         for date, annotations in buy_annotations.items():
-            fig.add_trace(go.Scatter(
-                x=[date], y=[returns[dates.index(date)]],
+            self.fig.add_trace(go.Scatter(
+                x=[date + timedelta(minutes=400)], y=[returns[dates.index(date)]],
                 mode='markers', name='Buy',
                 marker=dict(color='red', symbol='triangle-up', size=10),
                 text='<br>'.join(annotations),
-                hoverlabel=dict(font=dict(size=25)),
-                hovertemplate='%{x|(%b %d, %Y}, %{y:.2f}%)' + '<br>' + '<br>'.join(annotations),
-                showlegend=False
+                hoverlabel=dict(font=dict(size=20)),
+                hovertemplate=    
+                        'Date: %{x|%d/%m/%Y}<br>' +
+                        'CR: %{y:.1f}%<br><br>' +
+                        '<br>'.join(sorted(annotations, key=lambda x: float(x.split(': ')[1].rstrip('%')), reverse=True)),
+                              
+                showlegend=False,
+                legendgroup=f'my_group{i}'
             ))
 
         for date, annotations in sell_annotations.items():
-            fig.add_trace(go.Scatter(
-                x=[date + timedelta(minutes=400)], y=[returns[dates.index(date)]],
+            self.fig.add_trace(go.Scatter(
+                x=[date], y=[returns[dates.index(date)]],
                 mode='markers', name='Sell',
                 marker=dict(color='blue', symbol='triangle-down', size=10),
                 text='<br>'.join(annotations),
-                hoverlabel=dict(font=dict(size=25)),
-                hovertemplate='%{x|(%b %d, %Y}, %{y:.2f}%)' + '<br>' + '<br>'.join(annotations),
-                showlegend=False
+                hoverlabel=dict(font=dict(size=20)),
+                                hovertemplate=    
+                        'Date: %{x|%d/%m/%Y}<br>' +
+                        'CR: %{y:.1f}%<br><br>' +
+                        '<br>'.join(sorted(annotations, key=lambda x: float(x.split('%')[0].split(': ')[-1].rstrip('%')), reverse=True)),
+                              
+                showlegend=False,
+                legendgroup=f'my_group{i}'
             ))
 
-        fig.update_layout(title='Rate of return',
+        self.fig.update_layout(
+                        hoverlabel_align = 'right',
+                        title='Cumulative Return(CR)',
                         xaxis_title='Date',
-                        yaxis_title='Rate of return (%)',
+                        yaxis_title='Cumulative Return(%)',
                         showlegend=True,
                         font=dict(size=25),  # Increase the font size for title, axis titles, and legend
                         title_font=dict(size=40),  # Increase the title font size
                         xaxis=dict(title=dict(font=dict(size=30))),  # Increase the x-axis title font size
                         yaxis=dict(title=dict(font=dict(size=30))),  # Increase the y-axis title font size and add % symbol to tick format
-                        legend=dict(font=dict(size=40))  # 범례 글꼴 크기 변경               
-        )
-        fig.write_html("static/day_report.html")
+                        legend=dict(font=dict(size=40))  # 범례 글꼴 크기 변경            
+                    )
+        pio.write_json(self.fig, 'Record/day_graph.json') # 그래프를 json 파일로 저장, 이전 그래프 계속 누적되게 한다.
 
     # def return_stock_selling_minus(self, percen):
-    def static_stock(self):
-                # 파일 경로 설정
-        file_path = 'Record/stock_history.json'
+    def statistics_stock(self, file_path, json_path):
 
         # JSON 파일 읽기
         with open(file_path, 'r') as file:
@@ -388,12 +429,12 @@ class StockPortfolio:
         Retun_less_12per_counter = Counter(Retun_less_12per)
 
         # 데이터프레임 생성
-        quantity_buy_nonzero_df = pd.DataFrame(quantity_buy_nonzero_counter.items(), columns=['Stock', 'Buy Frequency'])
-        quantity_sold_nonzero_df = pd.DataFrame(quantity_sold_nonzero_counter.items(), columns=['Stock', 'Sell Frequency'])
-        Retun_less_0per_df = pd.DataFrame(Retun_less_0per_counter.items(), columns=['Stock', 'Retun_less_0% Frequency'])
-        Retun_less_4per_df = pd.DataFrame(Retun_less_4per_counter.items(), columns=['Stock', 'Retun_less_4% Frequency'])
-        Retun_less_8per_df = pd.DataFrame(Retun_less_8per_counter.items(), columns=['Stock', 'Retun_less_8% Frequency'])
-        Retun_less_12per_df = pd.DataFrame(Retun_less_12per_counter.items(), columns=['Stock', 'Retun_less_12% Frequency'])
+        quantity_buy_nonzero_df = pd.DataFrame(quantity_buy_nonzero_counter.items(), columns=['Stock', 'Buy'])
+        quantity_sold_nonzero_df = pd.DataFrame(quantity_sold_nonzero_counter.items(), columns=['Stock', 'Sell'])
+        Retun_less_0per_df = pd.DataFrame(Retun_less_0per_counter.items(), columns=['Stock', 'ROI < 0%'])
+        Retun_less_4per_df = pd.DataFrame(Retun_less_4per_counter.items(), columns=['Stock', 'ROI < -4%'])
+        Retun_less_8per_df = pd.DataFrame(Retun_less_8per_counter.items(), columns=['Stock', 'ROI < -8%'])
+        Retun_less_12per_df = pd.DataFrame(Retun_less_12per_counter.items(), columns=['Stock', 'ROI < -12%'])
 
         # 데이터프레임 리스트 생성
         dfs = [quantity_buy_nonzero_df, quantity_sold_nonzero_df, 
@@ -404,20 +445,16 @@ class StockPortfolio:
         merged_df = reduce(lambda left, right: pd.merge(left, right, on='Stock', how='outer'), dfs).fillna(0)
 
         # 'Total Frequency' 열 추가 및 3열로 마무리
-        merged_df['Total Frequency'] = merged_df[['Buy Frequency', 'Sell Frequency']].sum(axis=1)
+        merged_df['Total'] = merged_df[['Buy', 'Sell']].sum(axis=1)
 
         # 'Total Frequency' 열을 3번째 열로 배치
         cols = merged_df.columns.tolist()  # 기존 열 목록 가져오기
         # 'Total Frequency'를 제거하고, 2번 인덱스 위치에 'Total Frequency'를 삽입하여 새 열 순서 생성
-        new_cols = cols[:3] + ['Total Frequency'] + cols[3:-1]  
+        new_cols = cols[:3] + ['Total'] + cols[3:-1]  
         merged_df = merged_df[new_cols]  # 새 열 순서로 데이터프레임 재구성
 
         # 'Buy Frequency'로 정렬
-        sorted_df = merged_df.sort_values(by='Retun_less_0% Frequency', ascending=False)
+        sorted_df = merged_df.sort_values(by='ROI < 0%', ascending=False)
 
-        # # 결과 출력
-        # print("Stocks with non-zero quantity_buy and quantity_sold:")
-        # print(sorted_df)
-
-        # sorted_df를 CSV 파일로 저장
-        sorted_df.to_json('Record/sorted_stocks.json', orient='records')
+        # sorted_df를 json 파일로 저장
+        sorted_df.to_json(json_path, orient='records')

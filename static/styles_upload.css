@@ -2,14 +2,53 @@
     margin-right: 20px; /* 오른쪽 마진 추가 */
     margin-bottom: 20px; /* 아래쪽 마진 추가 */
 }
+
+.stock-table th {
+    text-align: center; /* 테이블 헤더 가운데 정렬 */
+}
+
+.stock-table td {
+    text-align: right; /* 테이블 데이터 셀 오른쪽 정렬 */
+}
+
+.stock-table td:first-child {
+    text-align: center; /* 첫 번째 열(Stock)의 데이터 셀 가운데 정렬 */
+}
+
+
 .tables-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     flex-wrap: wrap;
 }
 .center-table {
     display: flex;
-    justify-content: center;
+    justify-content: center; /* 컨테이너의 가운데 정렬 */
+    width: 100%; /* 컨테이너의 폭을 최대로 설정 */
+    overflow-x: auto; /* 가로 스크롤바 필요 시 활성화 */
+    height: 350px;
+}
+
+.center-table table {
+    border-collapse: collapse;
+    width: auto; /* 테이블 자체의 너비를 내용에 맞게 조절 */
+    max-width: 1000px; /* 최대 너비 제한 */
+    height: auto; /* 높이 자동 조절 */
+    overflow-y: auto; /* 세로 스크롤바 필요 시 활성화 */
+    margin-bottom: 20px; /* 하단 여백 */
+}
+
+.center-table th {
+    background-color: #4CAF50; /* 헤더 배경색 */
+    color: white; /* 헤더 텍스트 색상 */
+    position: sticky;
+    top: 0; /* 상단에서 고정 */
+    z-index: 1; /* 우선순위 설정 */
+}
+
+.adj_stock-form{
+    margin-top: 80px;  /* 위 간격 */
+    margin-left: 160px; /* 왼쪽 간격 */
 }
 
 .hidden-row {
@@ -64,4 +103,78 @@ button:hover {
     justify-content: center;
     align-items: center;
     height: 100vh; /* 전체 화면 높이 */
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 1000px; /* 테이블의 최대 너비를 제한 */
+    overflow-x: auto; /* 가로 스크롤 추가 */
+    overflow-y: auto; /* 세로 스크롤 추가 */
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+th.asc::after, th.desc::after {
+    content: ' ';
+    border: 6px solid transparent;
+    border-top-color: white;
+    display: inline-block;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+th.asc::after {
+    transform: rotate(180deg);
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+tr:hover {
+    background-color: #ddd;
+}
+.hidden-row {
+    display: none;
+}
+.tables-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
+}
+.center {
+    text-align: center;
+}
+.adj_stock-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+.adj_stock-form label, .adj_stock-form input, .adj_stock-form button {
+    margin: 5px 0;
+}
+
+.centered-header {
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+.center-table th {
+    text-align: center; /* 테이블 헤더 가운데 정렬 */
+}
+
+.center-table td {
+    text-align: right; /* 테이블 데이터 셀 오른쪽 정렬 */
+}
+
+.center-table td:first-child {
+    text-align: center; /* 첫 번째 열(Stock)의 데이터 셀 가운데 정렬 */
 }

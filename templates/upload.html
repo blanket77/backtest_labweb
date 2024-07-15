@@ -50,64 +50,50 @@
                 return response.json();  // 서버로부터 JSON 형식의 응답을 받음
             })
             .then(data => {
-            createLastTable(data); // 예시 데이터를 사용하여 마지막 테이블 생성
+                createLastTable(data); // 예시 데이터를 사용하여 마지막 테이블 생성
 
-            // 폼 생성
-            const form = document.createElement('form');
-            form.className = 'user-form';
-            form.innerHTML = `
-                <label for="stockName">Stock Name:</label>
-                <input type="text" id="stockName" name="stockName">
+                // 폼 생성
+                const form = document.createElement('form');
+                form.className = 'adj_stock-form';
+                form.action = '/adj_day_backtest'; // 폼 데이터가 전송될 URL
+                form.method = 'POST'; // 폼 데이터를 POST 방식으로 전송
                 
-                <label for="investmentAmount">Investment Amount:</label>
-                <input type="number" id="investmentAmount" name="investmentAmount">
-                
-                <button type="submit">Submit</button>
-            `;
-            document.body.appendChild(form);
+                form.innerHTML = `
+                    <label for="stockName">Stock Name:</label>
+                    <input type="text" id="stockName" name="stockName">
+                    <button type="submit">Submit</button>
+                `;
+                document.body.appendChild(form);
 
-            // 폼 제출 이벤트 처리
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                
-                const stockName = document.getElementById('stockName').value;
-                const investmentAmount = document.getElementById('investmentAmount').value;
-                
-                // 여기에서 폼 데이터를 서버로 전송하거나 추가 작업을 수행할 수 있습니다.
-                console.log('Stock Name:', stockName);
-                console.log('Investment Amount:', investmentAmount);
+                // 폼 제출 이벤트 처리
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    const stockName = document.getElementById('stockName').value;
+                    
+                    // 새 창에서 폼 데이터를 전송
+                    const formData = new FormData();
+                    formData.append('stockName', stockName);
 
-                // 예: 폼 데이터를 서버로 POST 요청으로 전송
-                fetch('/submit_form', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        stockName: stockName,
-                        investmentAmount: investmentAmount
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Form submission response:', data);
-                    // 서버 응답을 바탕으로 추가 작업을 수행할 수 있습니다.
-                })
-                .catch(error => {
-                    console.error('There was a problem with the form submission:', error);
+                    const newWindow = window.open('', '_blank');
+                    const formElement = document.createElement('form');
+                    formElement.action = '/adj_day_backtest';
+                    formElement.method = 'POST';
+                    formElement.target = '_blank';
+
+                    const stockInputElement = document.createElement('input');
+                    stockInputElement.type = 'hidden';
+                    stockInputElement.name = 'stockName';
+                    stockInputElement.value = stockName;
+
+                    formElement.appendChild(stockInputElement);
+                    newWindow.document.body.appendChild(formElement);
+                    formElement.submit();
                 });
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
             });
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-
-            
         }
         function createTable(title, data, container) {
             const tableDiv = document.createElement('div');
@@ -141,7 +127,7 @@
                 const td1 = document.createElement('td');
                 td1.textContent = stock;
                 const td2 = document.createElement('td');
-                td2.textContent = (return_rate*100).toFixed(2) + '%';  // 소수점 둘째 자리까지 반올림하고 % 기호 추가
+                td2.textContent = (return_rate*100).toFixed(1) + '%';  // 소수점 둘째 자리까지 반올림하고 % 기호 추가
                 row.appendChild(td1);
                 row.appendChild(td2);
                 tbody.appendChild(row);
@@ -212,12 +198,12 @@
 
             // 모든 행을 다시 추가하면서 숨김 클래스 제거
             rows.forEach(row => {
-                row.classList.remove('hidden-row');
+                // row.classList.remove('hidden-row');
                 tbody.appendChild(row);
             });
 
             // 상위 5개 행을 제외한 나머지 행 숨기기
-            rows.slice(5).forEach(row => row.classList.add('hidden-row'));
+            // rows.slice(5).forEach(row => row.classList.add('hidden-row'));
         }
 
         // 열 제목에 클릭 이벤트 리스너를 추가하는 함수
@@ -235,17 +221,21 @@
         }
 
         // 마지막 테이블을 생성하는 함수에 열 제목 클릭 시 정렬 기능 추가
-        // 마지막 테이블을 생성하는 함수에 열 제목 클릭 시 정렬 기능 추가
         // 테이블을 생성하는 함수
         function createLastTable(data) {
             const tableDiv = document.createElement('div');
             tableDiv.className = "center-table";
+
+            const LastTableHeader = document.createElement('h2');
+            LastTableHeader.className = "centered-header"; // 클래스 추가
+            LastTableHeader.textContent = "Stock frequency";
+            document.body.appendChild(LastTableHeader);
             
             // 테이블 생성
             let tableHtml = '<table border="1"><thead><tr>';
-            const headers = ['Stock', 'Buy Frequency', 'Sell Frequency', 'Total Frequency', 
-                            'Retun_less_0% Frequency', 'Retun_less_4% Frequency', 
-                            'Retun_less_8% Frequency', 'Retun_less_12% Frequency'];
+            const headers = ['Stock', 'Buy', 'Sell', 'Total', 
+                            'ROI < 0%', 'ROI < -4%', 
+                            'ROI < -8%', 'ROI < -12%'];
 
             // 헤더 생성
             headers.forEach(key => {
@@ -256,8 +246,12 @@
             // 테이블 행 생성
             data.forEach(item => {
                 tableHtml += '<tr>';
-                headers.forEach(key => {
-                    tableHtml += `<td>${item[key]}</td>`;
+                headers.forEach((key, index) => {
+                    if (index === 0) {  // 첫 번째 열에만 링크 추가
+                        tableHtml += `<td><a href="#" onclick="openNewWindow('${item[key]}')">${item[key]}</a></td>`;
+                    } else {
+                        tableHtml += `<td>${item[key]}</td>`;
+                    }
                 });
                 tableHtml += '</tr>';
             });
@@ -273,8 +267,12 @@
             // 초기 로드 시 상위 5개 행만 보이도록 설정
             const tbody = table.tBodies[0];
             const rows = Array.from(tbody.querySelectorAll('tr'));
-            rows.slice(5).forEach(row => row.classList.add('hidden-row'));
+            // rows.slice(10).forEach(row => row.classList.add('hidden-row'));
         }
+    function openNewWindow(stockSymbol) {
+        var url = `/get_stock_data?symbol=${stockSymbol}`;
+        window.open(url, '_blank');
+    }
 
         
     </script>

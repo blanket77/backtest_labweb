@@ -8,7 +8,7 @@ def get_date_to_symbols(csv_path):
     date_to_symbols = origin_data.groupby('date')['ticker'].apply(list).to_dict()
     return date_to_symbols
 
-def trade_stocks(portfolio, date, symbols):
+def trade_stocks(portfolio, date, symbols, period):
  # 주식 데이터를 가져옵니다.
     # 날짜 범위 계산
     engine = create_engine('mysql+pymysql://root:1234@127.0.0.1:3306/stock_db')
@@ -42,7 +42,7 @@ def trade_stocks(portfolio, date, symbols):
     # print(stocks_owned)
 
     # 다음 날 조정 종가를 가져와서 매도합니다.
-    adj_closing_prices = data.iloc[1]
+    adj_closing_prices = data.iloc[period]
 
     # 최종 자금을 계산합니다.
     for symbol, owned in stocks_owned.items():

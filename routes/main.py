@@ -1,11 +1,12 @@
 from flask import request, jsonify, render_template, send_from_directory, request,  current_app, redirect, url_for, render_template_string
+from services.one_stock_plotly import one_stock_plotly
 from . import main_bp
-from services.backtest_service import perform_backtest
 from services.backtests.Static_Asset_Allocation import Static_Asset_Allocation
 import os
 from werkzeug.utils import secure_filename
 from services.day_run import *
 import json
+from services.adjust_day_run import *
 
 # 허용된 파일 확장자를 정의하는 함수
 def allowed_file(filename):
@@ -54,7 +55,6 @@ def backtest():
     end_date = data.get('endDate')
 
     # 백테스트 로직 호출
-    result = perform_backtest(symbol, start_date, end_date)
     results = Static_Asset_Allocation(symbol, start_date, end_date)
 
     return jsonify(results)
@@ -71,9 +71,35 @@ def day_backtest():
     # JSON 데이터를 클라이언트에 반환합니다.
     return jsonify(stock_data), 200
 
+@main_bp.route('/day_backtest_adj', methods=['POST'])
+def day_backtest_adj():
+    json_file_path = os.path.join(current_app.root_path, 'Record/stock_rate_adj.json')
+
+    # stock_rate.json 파일을 열고 JSON 데이터를 로드합니다.
+    with open(json_file_path, 'r') as file:
+        stock_data = json.load(file)
+
+    # JSON 데이터를 클라이언트에 반환합니다.
+    return jsonify(stock_data), 200
+
+
+
+
 @main_bp.route('/sorted_stocks', methods=['POST'])
 def sorted_stocks():
-    json_file_path = os.path.join(current_app.root_path, 'Record/sorted_stocks.json')
+    json_file_path = os.path.join(current_app.root_path, 'Record/sorted_stock.json')
+
+    # stock_rate.json 파일을 열고 JSON 데이터를 로드합니다.
+    with open(json_file_path, 'r') as file:
+        sorted_stock_data = json.load(file)
+
+    # JSON 데이터를 클라이언트에 반환합니다.
+    return jsonify(sorted_stock_data), 200
+
+
+@main_bp.route('/sorted_stocks_adj', methods=['POST'])
+def sorted_stocks_adj():
+    json_file_path = os.path.join(current_app.root_path, 'Record/sorted_stock_adj.json')
 
     # stock_rate.json 파일을 열고 JSON 데이터를 로드합니다.
     with open(json_file_path, 'r') as file:
@@ -89,22 +115,19 @@ def download_report():
     return send_from_directory('static', 'report.html', as_attachment=True)
 
 
-
-# @main_bp.route('/plot')
-# def plot():
-#     # 그래프 생성
-#     plt.figure()
-#     plt.plot([1, 2, 3, 4, 5], [1, 4, 2, 3, 5])
-#     plt.title('Sample Plot')
-#     plt.xlabel('X-axis')
-#     plt.ylabel('Y-axis')
-
-#     # 그래프를 이미지 파일로 저장
-#     buf = io.BytesIO()
-#     plt.savefig(buf, format='png')
-#     buf.seek(0)
-#     return send_file(buf, mimetype='image/png')
-
 @main_bp.route('/show_plot')
 def show_plot():
     return render_template('backtest_report.html')
+
+
+@main_bp.route('/adj_day_backtest', methods=['POST'])
+def adj_day_backtest():
+    stock_name = request.form.get('stockName', 'ALB')  # 폼 데이터에서 stockName 값을 가져옴, 기본값은 'ALB'
+    adj_run_portfolio_analysis(stock_name)
+    return render_template('adj_day.html')
+
+@main_bp.route('/get_stock_data', methods=['GET'])
+def get_stock_data():
+    stock_symbol = request.args.get('symbol')
+    one_stock_plotly(stock_symbol)
+    return send_from_directory('static', 'stock_plot.html')
