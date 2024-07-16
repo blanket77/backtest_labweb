@@ -6,10 +6,11 @@ import contextlib
 import quantstats as qs
 import plotly.graph_objects as go
 
+# 정적 자산 배분 전략
 def Static_Asset_Allocation(tickers, start_date, end_date):
-
     ticker_str = ', '.join(tickers)  # 티커를 SQL 쿼리에 맞는 형식으로 변환
 
+    # 초기 자본금 설정
     initial_capitals =1000000
 
     # 리밸런싱 변수
@@ -108,6 +109,7 @@ def Static_Asset_Allocation(tickers, start_date, end_date):
 
     # 백테스트 실행
     backtest = bt.Backtest(strategy, data, initial_capital = initial_capitals)
+    # 백테스트 실행
     result = bt.run(backtest)
 
     # 백테스트 결과 데이터 가져오기
@@ -134,9 +136,6 @@ def Static_Asset_Allocation(tickers, start_date, end_date):
     # HTML 파일로 저장
     fig.write_html("static/backtest_report.html")
 
-    print("Backtest report saved as backtest_report.html")
-
-
 
     # result 객체에서 누적 수익률 추출
     returns = result.get('Asset_EW').prices.pct_change().dropna()
@@ -151,16 +150,11 @@ def Static_Asset_Allocation(tickers, start_date, end_date):
     returns = result.get_security_weights().dropna()
     returns.columns = [f'{col}_return' for col in returns.columns]
 
-    # # 상위 디렉토리로 경로 이동
-    # import sys
-    # sys.path.append('..')  # 이 코드는 main.py가 위치한 subpackage 디렉토리에서 상위 디렉토리로 경로를 추가합니다.
-    # # my_module 모듈을 임포트
-    # import csv_print
-
+    # # csv_print 모듈의 print_csv 함수 호출
     with io.StringIO() as buf, contextlib.redirect_stdout(buf):
         result.display()
         result_string = buf.getvalue()
-
+    
     result_string = result_string.replace('\n', '<br>')
     return result_string
 

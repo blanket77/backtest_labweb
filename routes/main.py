@@ -1,9 +1,8 @@
-from flask import request, jsonify, render_template, send_from_directory, request,  current_app, redirect, url_for, render_template_string
+from flask import request, jsonify, render_template, send_from_directory, request,  current_app
 from services.one_stock_plotly import one_stock_plotly
 from . import main_bp
 from services.backtests.Static_Asset_Allocation import Static_Asset_Allocation
 import os
-from werkzeug.utils import secure_filename
 from services.day_run import *
 import json
 from services.adjust_day_run import *
@@ -103,7 +102,7 @@ def sorted_stocks():
     # JSON 데이터를 클라이언트에 반환합니다.
     return jsonify(sorted_stock_data), 200
 
-
+# 수정된 백테스트 종목별 빈도수를 반환하는 라우팅(매수, 매도, 빈도,ROI)
 @main_bp.route('/sorted_stocks_adj', methods=['POST'])
 def sorted_stocks_adj():
     json_file_path = os.path.join(current_app.root_path, 'Record/sorted_stock_adj.json')
