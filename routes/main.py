@@ -13,22 +13,27 @@ def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'csv', 'pdf'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# 메인 페이지 라우팅
 @main_bp.route('/')
 def home():
     return render_template('index.html')
 
+# 백테스트 페이지 라우팅
 @main_bp.route('/backtests')
 def homes():
     return render_template('backtest.html')
 
+# 그래프 페이지 라우팅
 @main_bp.route('/showReport')
 def showRepot():
     return send_from_directory('static', 'report.html')
 
+# 업로드 페이지 라우팅
 @main_bp.route('/up')
 def up():
     return render_template('upload.html')
 
+# 업로드 처리 라우팅
 @main_bp.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -43,6 +48,7 @@ def upload_file():
         return '', 204  # 성공 시 아무 내용 없이 응답
     return 'File type not allowed', 400
 
+# 백테스트 처리 라우팅
 @main_bp.route('/backtest', methods=['POST'])
 def backtest():
     data = request.get_json()
@@ -59,6 +65,7 @@ def backtest():
 
     return jsonify(results)
 
+# 백테스트 종목별 수익률을 반환하는 라우팅
 @main_bp.route('/day_backtest', methods=['POST'])
 def day_backtest():
     run_portfolio_analysis()
@@ -71,6 +78,7 @@ def day_backtest():
     # JSON 데이터를 클라이언트에 반환합니다.
     return jsonify(stock_data), 200
 
+# 수정된 백테스트 종목별 수익률을 반환하는 라우팅
 @main_bp.route('/day_backtest_adj', methods=['POST'])
 def day_backtest_adj():
     json_file_path = os.path.join(current_app.root_path, 'Record/stock_rate_adj.json')
@@ -83,8 +91,7 @@ def day_backtest_adj():
     return jsonify(stock_data), 200
 
 
-
-
+# 백테스트 종목별 빈도수를 반환하는 라우팅(매수, 매도, 빈도,ROI)
 @main_bp.route('/sorted_stocks', methods=['POST'])
 def sorted_stocks():
     json_file_path = os.path.join(current_app.root_path, 'Record/sorted_stock.json')
@@ -109,23 +116,24 @@ def sorted_stocks_adj():
     return jsonify(sorted_stock_data), 200
 
 
-
+# 백테스트 결과를 다운로드하는 라우팅
 @main_bp.route('/download_report')
 def download_report():
     return send_from_directory('static', 'report.html', as_attachment=True)
 
-
+# 백테스트 결과를 보여주는 페이지 라우팅
 @main_bp.route('/show_plot')
 def show_plot():
     return render_template('backtest_report.html')
 
-
+# 백테스트 결과를 보여주는 페이지 라우팅
 @main_bp.route('/adj_day_backtest', methods=['POST'])
 def adj_day_backtest():
     stock_name = request.form.get('stockName', 'ALB')  # 폼 데이터에서 stockName 값을 가져옴, 기본값은 'ALB'
     adj_run_portfolio_analysis(stock_name)
     return render_template('adj_day.html')
 
+# 주식 데이터를 가져오는 라우팅
 @main_bp.route('/get_stock_data', methods=['GET'])
 def get_stock_data():
     stock_symbol = request.args.get('symbol')

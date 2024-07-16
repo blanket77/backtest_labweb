@@ -10,13 +10,12 @@ from collections import Counter
 from functools import reduce
 import plotly.io as pio
 
+# 매수 수수료
 buy_commission = 0 
+# 매도 수수료
 sell_commission = 0 
-# buy_commission = 0.0025 
-# sell_commission = 0.0025 
-# buy_commission = 0.0000 
-# sell_commission = 0.0001 
 
+# 주식 포트폴리오 클래스
 class StockPortfolio:
     def __init__(self, date, cash):
         self.date = datetime.strptime(date, '%Y-%m-%d')
@@ -31,6 +30,7 @@ class StockPortfolio:
         engine.dispose()
         self.fig = go.Figure()
 
+    # 주식 종목 추가
     def initialization_stock(self):
 
         if(self.memory_date != self.date):
@@ -40,6 +40,7 @@ class StockPortfolio:
                 self.stocks[ticker]['return_stock_selling'] = 0
             self.memory_date = self.date
 
+    # 주식 종목 추가
     def add_stock(self, ticker, price, quantity):
 
         if ticker not in self.stocks:
@@ -56,6 +57,7 @@ class StockPortfolio:
         else:
             print(f"Stock {ticker} already exists in the portfolio.")
 
+    # 주식 매수
     def buy_stock(self, date, ticker, price, quantity):
         date = datetime.strptime(date, '%Y-%m-%d')
         self.date = date
@@ -79,6 +81,7 @@ class StockPortfolio:
         self.cash_plus_stock = self.get_cash_plus_stocks()
         self.update_daily_history(date)
 
+    # 주식 판매
     def sell_stock(self, date, ticker, price, quantity):
         date = datetime.strptime(date, '%Y-%m-%d')
         self.date = date
@@ -110,6 +113,7 @@ class StockPortfolio:
         self.cash_plus_stock = self.get_cash_plus_stocks()
         self.update_daily_history(date)
 
+    # 현금 + 주식 가치 계산
     def get_cash_plus_stocks(self):
         cash_plus_stock = 0
         cash_plus_stock += self.cash
@@ -117,6 +121,7 @@ class StockPortfolio:
             cash_plus_stock += data['price'] * data['quantity'] * (1 - sell_commission)
         return cash_plus_stock
 
+    # 모든 주식 종목을 판매
     def sell_all_stocks(self):
         # 가장 최근 날짜를 가져옴
         if self.daily_history:
@@ -136,6 +141,7 @@ class StockPortfolio:
         self.update_daily_history(datetime.strptime(last_date, '%Y-%m-%d'))
         return total_value
 
+    # 포트폴리오의 수익률 계산
     def calculate_return_rate(self):
         # 포트폴리오의 복사본을 생성
         portfolio_copy = copy.deepcopy(self)
@@ -143,6 +149,7 @@ class StockPortfolio:
         return_rate = ((current_value - self.initial_cash) / self.initial_cash) * 100
         return return_rate
 
+    # 주식 종목의 수익률 계산
     def calculate_stock_return_rate(self, ticker):
         if ticker in self.stocks:
             data = self.stocks[ticker]
@@ -155,6 +162,7 @@ class StockPortfolio:
             print(f"Stock {ticker} not found in the portfolio.")
             return None
 
+    # 모든 주식 종목의 수익률 계산
     def calculate_all_stock_return_rates(self, file_name):
         stock_return_rates = {}
         portfolio_copy = copy.deepcopy(self)
@@ -184,6 +192,7 @@ class StockPortfolio:
 
         return stock_return_rates
 
+    # 일별 기록을 업데이트
     def update_daily_history(self, date):
         
         tmp =  copy.deepcopy(self.stocks)
@@ -196,6 +205,7 @@ class StockPortfolio:
         }
         # self.cash_plus_stock = self.get_cash_plus_stocks()
 
+    # 포트폴리오 요약을 가져옴
     def get_portfolio_summary(self):
         summary = {
             'date': self.date,
@@ -206,9 +216,11 @@ class StockPortfolio:
         }
         return summary
 
+    # 일별 기록을 가져옴
     def get_daily_history(self):
         return self.daily_history
     
+    # 일별 기록을 파일로 저장
     def get_daily_history_file(self, file_name):
         directory = './Record'
         if not os.path.exists(directory):
@@ -219,6 +231,7 @@ class StockPortfolio:
         with open(file_path, 'w') as file:
             json.dump(self.daily_history, file, indent=4)
 
+    # 누락된 날짜를 채워줌
     def fill_missing_dates(self):
         if not self.daily_history:
             return
@@ -258,9 +271,11 @@ class StockPortfolio:
         # 날짜 순으로 정렬
         self.daily_history = OrderedDict(sorted(self.daily_history.items()))
     
+    # 이전 그래프를 불러오기
     def previous_fig_json(self, json_path):
         self.fig = pio.read_json(json_path) 
 
+    # 수익률 그래프 그리기
     def plot_rate_of_return_history(self):
         self.fill_missing_dates()  # Fill in missing dates before plotting
 
@@ -311,11 +326,13 @@ class StockPortfolio:
         #SPY 수익률과 포트폴리오 수익률을 그래프와 라벨로 표시
         spy_trace_exists = any(trace.name == 'SPY' for trace in self.fig.data)
         
+        # 기존 그래프에 있는 트레이스 이름 가져오기
         existing_names = {trace.name for trace in self.fig.data}
         i = 1
         while f'My{i}' in existing_names:
             i += 1
 
+        # SPY 수익률 그래프 추가
         if not spy_trace_exists:
             self.fig.add_trace(go.Scatter(
                 x=dates, y=spy_price, mode='lines+markers', name='SPY',
@@ -342,7 +359,7 @@ class StockPortfolio:
             legendgroup=f'my_group{i}'
         ))
         
-
+        # 매수 주석 추가
         for date, annotations in buy_annotations.items():
             self.fig.add_trace(go.Scatter(
                 x=[date + timedelta(minutes=400)], y=[returns[dates.index(date)]],
@@ -359,6 +376,7 @@ class StockPortfolio:
                 legendgroup=f'my_group{i}'
             ))
 
+        # 매도 주석 추가
         for date, annotations in sell_annotations.items():
             self.fig.add_trace(go.Scatter(
                 x=[date], y=[returns[dates.index(date)]],
@@ -389,7 +407,7 @@ class StockPortfolio:
                     )
         pio.write_json(self.fig, 'Record/day_graph.json') # 그래프를 json 파일로 저장, 이전 그래프 계속 누적되게 한다.
 
-    # def return_stock_selling_minus(self, percen):
+    # 주식 종목별 통계 계산(매수, 매도, ROI < 0%, ROI < -4%, ROI < -8%, ROI < -12%)
     def statistics_stock(self, file_path, json_path):
 
         # JSON 파일 읽기
@@ -404,6 +422,7 @@ class StockPortfolio:
         Retun_less_8per = []
         Retun_less_12per = []
 
+        # 종목별로 빈도 계산
         for date, details in data.items():
             for stock, stock_data in details['stocks'].items():
                 if stock_data['quantity_buy'] > 0:
