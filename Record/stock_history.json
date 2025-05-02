@@ -37,7 +37,7 @@
     },
     "2024-01-18": {
         "cash": 156.87909698486328,
-        "cash_plus_stock": 1131745601.95407,
+        "cash_plus_stock": 1138372399.8192472,
         "stocks": {
             "WDC": {
                 "price": 53.54999923706055,
@@ -24368,7 +24368,7 @@
         }
     },
     "2024-04-03": {
-        "cash": 92.55327129364014,
+        "cash": 262.72043895721436,
         "cash_plus_stock": 1112254009.0935469,
         "stocks": {
             "WDC": {
@@ -25153,39 +25153,29 @@
             },
             "XRAY": {
                 "price": 31.64849853515625,
-                "quantity": 11714657.0,
-                "total_bought": 370751304.9043579,
+                "quantity": 17571986.0,
+                "total_bought": 556126973.1807861,
                 "total_sold": 0,
-                "quantity_buy": 11714657.0,
+                "quantity_buy": 17571986.0,
                 "quantity_sold": 0,
-                "recovery_bought": 370751304.9043579,
-                "return_stock_selling": 0
-            },
-            "VTR": {
-                "price": 43.189998626708984,
-                "quantity": 8584194.0,
-                "total_bought": 370751327.0714035,
-                "total_sold": 0,
-                "quantity_buy": 8584194.0,
-                "quantity_sold": 0,
-                "recovery_bought": 370751327.0714035,
+                "recovery_bought": 556126973.1807861,
                 "return_stock_selling": 0
             },
             "HUM": {
                 "price": 307.30889892578125,
-                "quantity": 1206445.0,
-                "total_bought": 370751284.56451416,
+                "quantity": 1809667.0,
+                "total_bought": 556126773.1923218,
                 "total_sold": 0,
-                "quantity_buy": 1206445.0,
+                "quantity_buy": 1809667.0,
                 "quantity_sold": 0,
-                "recovery_bought": 370751284.56451416,
+                "recovery_bought": 556126773.1923218,
                 "return_stock_selling": 0
             }
         }
     },
     "2024-04-04": {
-        "cash": 621.8555822372437,
-        "cash_plus_stock": 1122827932.3998022,
+        "cash": 480.4651212692261,
+        "cash_plus_stock": 1129402501.2149687,
         "stocks": {
             "WDC": {
                 "price": 71.62000274658203,
@@ -25970,18 +25960,8 @@
             "XRAY": {
                 "price": 32.105587005615234,
                 "quantity": 0.0,
-                "total_bought": 370751304.9043579,
-                "total_sold": 376105939.55443954,
-                "quantity_buy": 0,
-                "quantity_sold": 0,
-                "recovery_bought": 0.0,
-                "return_stock_selling": 0
-            },
-            "VTR": {
-                "price": 43.09000015258789,
-                "quantity": 0.0,
-                "total_bought": 370751327.0714035,
-                "total_sold": 369892920.76984406,
+                "total_bought": 556126973.1807861,
+                "total_sold": 564158925.3844528,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -25990,8 +25970,8 @@
             "HUM": {
                 "price": 312.3465881347656,
                 "quantity": 0.0,
-                "total_bought": 370751284.56451416,
-                "total_sold": 376828979.5222473,
+                "total_bought": 556126773.1923218,
+                "total_sold": 565243313.1100769,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -25999,39 +25979,39 @@
             },
             "MPWR": {
                 "price": 642.1483764648438,
-                "quantity": 582849.0,
-                "total_bought": 374275539.0741577,
+                "quantity": 586262.0,
+                "total_bought": 376467191.4830322,
                 "total_sold": 0,
-                "quantity_buy": 582849.0,
+                "quantity_buy": 586262.0,
                 "quantity_sold": 0,
-                "recovery_bought": 374275539.0741577,
+                "recovery_bought": 376467191.4830322,
                 "return_stock_selling": 0
             },
             "DG": {
                 "price": 158.45188903808594,
-                "quantity": 2362079.0,
-                "total_bought": 374275879.607193,
+                "quantity": 2375910.0,
+                "total_bought": 376467427.68447876,
                 "total_sold": 0,
-                "quantity_buy": 2362079.0,
+                "quantity_buy": 2375910.0,
                 "quantity_sold": 0,
-                "recovery_bought": 374275879.607193,
+                "recovery_bought": 376467427.68447876,
                 "return_stock_selling": 0
             },
             "PAYX": {
                 "price": 119.01969909667969,
-                "quantity": 3144655.0,
-                "total_bought": 374275891.86286926,
+                "quantity": 3163068.0,
+                "total_bought": 376467401.5823364,
                 "total_sold": 0,
-                "quantity_buy": 3144655.0,
+                "quantity_buy": 3163068.0,
                 "quantity_sold": 0,
-                "recovery_bought": 374275891.86286926,
+                "recovery_bought": 376467401.5823364,
                 "return_stock_selling": 0
             }
         }
     },
     "2024-04-05": {
-        "cash": 1122827932.3998022,
-        "cash_plus_stock": 1122827932.3998022,
+        "cash": 1129402501.2149687,
+        "cash_plus_stock": 1129402501.2149687,
         "stocks": {
             "WDC": {
                 "price": 71.62000274658203,
@@ -26816,38 +26796,28 @@
             "XRAY": {
                 "price": 32.105587005615234,
                 "quantity": 0.0,
-                "total_bought": 370751304.9043579,
-                "total_sold": 376105939.55443954,
+                "total_bought": 556126973.1807861,
+                "total_sold": 564158925.3844528,
                 "quantity_buy": 0,
-                "quantity_sold": 11714657.0,
+                "quantity_sold": 17571986.0,
                 "recovery_bought": 0.0,
                 "return_stock_selling": 0.014442658944822759
-            },
-            "VTR": {
-                "price": 43.09000015258789,
-                "quantity": 0.0,
-                "total_bought": 370751327.0714035,
-                "total_sold": 369892920.76984406,
-                "quantity_buy": 0,
-                "quantity_sold": 8584194.0,
-                "recovery_bought": 0.0,
-                "return_stock_selling": -0.002315315519812358
             },
             "HUM": {
                 "price": 312.3465881347656,
                 "quantity": 0.0,
-                "total_bought": 370751284.56451416,
-                "total_sold": 376828979.5222473,
+                "total_bought": 556126773.1923218,
+                "total_sold": 565243313.1100769,
                 "quantity_buy": 0,
-                "quantity_sold": 1206445.0,
+                "quantity_sold": 1809667.0,
                 "recovery_bought": 0.0,
                 "return_stock_selling": 0.016392916790219723
             }
         }
     },
     "2024-04-08": {
-        "cash": 131.6489553451538,
-        "cash_plus_stock": 1153043424.8829336,
+        "cash": 405.9975919723511,
+        "cash_plus_stock": 1159794923.6254606,
         "stocks": {
             "WDC": {
                 "price": 71.62000274658203,
@@ -27632,18 +27602,8 @@
             "XRAY": {
                 "price": 32.105587005615234,
                 "quantity": 0.0,
-                "total_bought": 370751304.9043579,
-                "total_sold": 376105939.55443954,
-                "quantity_buy": 0,
-                "quantity_sold": 0,
-                "recovery_bought": 0.0,
-                "return_stock_selling": 0
-            },
-            "VTR": {
-                "price": 43.09000015258789,
-                "quantity": 0.0,
-                "total_bought": 370751327.0714035,
-                "total_sold": 369892920.76984406,
+                "total_bought": 556126973.1807861,
+                "total_sold": 564158925.3844528,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -27652,8 +27612,8 @@
             "HUM": {
                 "price": 312.3465881347656,
                 "quantity": 0.0,
-                "total_bought": 370751284.56451416,
-                "total_sold": 376828979.5222473,
+                "total_bought": 556126773.1923218,
+                "total_sold": 565243313.1100769,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -27661,49 +27621,49 @@
             },
             "MPWR": {
                 "price": 680.26953125,
-                "quantity": 847490.0,
-                "total_bought": 950797164.1132202,
-                "total_sold": 396494416.01953125,
-                "quantity_buy": 847490.0,
-                "quantity_sold": 582849.0,
-                "recovery_bought": 576521625.0390625,
+                "quantity": 852452.0,
+                "total_bought": 956364313.9361572,
+                "total_sold": 398816175.9296875,
+                "quantity_buy": 852452.0,
+                "quantity_sold": 586262.0,
+                "recovery_bought": 579897122.453125,
                 "return_stock_selling": 0.05936502556468474
             },
             "DG": {
                 "price": 156.74000549316406,
                 "quantity": 0.0,
-                "total_bought": 374275879.607193,
-                "total_sold": 370232275.4352875,
+                "total_bought": 376467427.68447876,
+                "total_sold": 372400146.4512634,
                 "quantity_buy": 0,
-                "quantity_sold": 2362079.0,
+                "quantity_sold": 2375910.0,
                 "recovery_bought": 0.0,
                 "return_stock_selling": -0.010803806475985918
             },
             "PAYX": {
                 "price": 122.8484878540039,
                 "quantity": 0.0,
-                "total_bought": 374275891.86286926,
-                "total_sold": 386316111.57253265,
+                "total_bought": 376467401.5823364,
+                "total_sold": 388578120.7793884,
                 "quantity_buy": 0,
-                "quantity_sold": 3144655.0,
+                "quantity_sold": 3163068.0,
                 "recovery_bought": 0.0,
                 "return_stock_selling": 0.0321693701663125
             },
             "MMC": {
                 "price": 204.27999877929688,
-                "quantity": 2822213.0,
-                "total_bought": 576521668.1949158,
+                "quantity": 2838738.0,
+                "total_bought": 579897395.1747437,
                 "total_sold": 0,
-                "quantity_buy": 2822213.0,
+                "quantity_buy": 2838738.0,
                 "quantity_sold": 0,
-                "recovery_bought": 576521668.1949158,
+                "recovery_bought": 579897395.1747437,
                 "return_stock_selling": 0
             }
         }
     },
     "2024-04-09": {
-        "cash": 131.6489553451538,
-        "cash_plus_stock": 1131745601.95407,
+        "cash": 405.9975919723511,
+        "cash_plus_stock": 1138372399.8192472,
         "stocks": {
             "WDC": {
                 "price": 72.6500015258789,
@@ -28488,18 +28448,8 @@
             "XRAY": {
                 "price": 32.64216995239258,
                 "quantity": 0.0,
-                "total_bought": 370751304.9043579,
-                "total_sold": 376105939.55443954,
-                "quantity_buy": 0,
-                "quantity_sold": 0,
-                "recovery_bought": 0.0,
-                "return_stock_selling": 0
-            },
-            "VTR": {
-                "price": 44.0099983215332,
-                "quantity": 0.0,
-                "total_bought": 370751327.0714035,
-                "total_sold": 369892920.76984406,
+                "total_bought": 556126973.1807861,
+                "total_sold": 564158925.3844528,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -28508,8 +28458,8 @@
             "HUM": {
                 "price": 318.8407287597656,
                 "quantity": 0.0,
-                "total_bought": 370751284.56451416,
-                "total_sold": 376828979.5222473,
+                "total_bought": 556126773.1923218,
+                "total_sold": 565243313.1100769,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -28517,19 +28467,19 @@
             },
             "MPWR": {
                 "price": 681.0982666015625,
-                "quantity": 847490.0,
-                "total_bought": 950797164.1132202,
-                "total_sold": 396494416.01953125,
+                "quantity": 852452.0,
+                "total_bought": 956364313.9361572,
+                "total_sold": 398816175.9296875,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
-                "recovery_bought": 576521625.0390625,
+                "recovery_bought": 579897122.453125,
                 "return_stock_selling": 0
             },
             "DG": {
                 "price": 153.38999938964844,
                 "quantity": 0.0,
-                "total_bought": 374275879.607193,
-                "total_sold": 370232275.4352875,
+                "total_bought": 376467427.68447876,
+                "total_sold": 372400146.4512634,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -28538,8 +28488,8 @@
             "PAYX": {
                 "price": 125.56632232666016,
                 "quantity": 0.0,
-                "total_bought": 374275891.86286926,
-                "total_sold": 386316111.57253265,
+                "total_bought": 376467401.5823364,
+                "total_sold": 388578120.7793884,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -28547,19 +28497,19 @@
             },
             "MMC": {
                 "price": 204.3300018310547,
-                "quantity": 2822213.0,
-                "total_bought": 576521668.1949158,
+                "quantity": 2838738.0,
+                "total_bought": 579897395.1747437,
                 "total_sold": 0,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
-                "recovery_bought": 576521668.1949158,
+                "recovery_bought": 579897395.1747437,
                 "return_stock_selling": 0
             }
         }
     },
     "2024-04-10": {
-        "cash": 1131745601.95407,
-        "cash_plus_stock": 1131745601.95407,
+        "cash": 1138372399.8192472,
+        "cash_plus_stock": 1138372399.8192472,
         "stocks": {
             "WDC": {
                 "price": 71.62000274658203,
@@ -29344,18 +29294,8 @@
             "XRAY": {
                 "price": 32.105587005615234,
                 "quantity": 0.0,
-                "total_bought": 370751304.9043579,
-                "total_sold": 376105939.55443954,
-                "quantity_buy": 0,
-                "quantity_sold": 0,
-                "recovery_bought": 0.0,
-                "return_stock_selling": 0
-            },
-            "VTR": {
-                "price": 43.09000015258789,
-                "quantity": 0.0,
-                "total_bought": 370751327.0714035,
-                "total_sold": 369892920.76984406,
+                "total_bought": 556126973.1807861,
+                "total_sold": 564158925.3844528,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -29364,8 +29304,8 @@
             "HUM": {
                 "price": 312.3465881347656,
                 "quantity": 0.0,
-                "total_bought": 370751284.56451416,
-                "total_sold": 376828979.5222473,
+                "total_bought": 556126773.1923218,
+                "total_sold": 565243313.1100769,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -29374,18 +29314,18 @@
             "MPWR": {
                 "price": 665.4623413085938,
                 "quantity": 0.0,
-                "total_bought": 950797164.1132202,
-                "total_sold": 960467095.6551514,
+                "total_bought": 956364313.9361572,
+                "total_sold": 966090879.7028809,
                 "quantity_buy": 0,
-                "quantity_sold": 847490.0,
+                "quantity_sold": 852452.0,
                 "recovery_bought": 0.0,
                 "return_stock_selling": -0.021766651689070854
             },
             "DG": {
                 "price": 156.74000549316406,
                 "quantity": 0.0,
-                "total_bought": 374275879.607193,
-                "total_sold": 370232275.4352875,
+                "total_bought": 376467427.68447876,
+                "total_sold": 372400146.4512634,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -29394,8 +29334,8 @@
             "PAYX": {
                 "price": 122.8484878540039,
                 "quantity": 0.0,
-                "total_bought": 374275891.86286926,
-                "total_sold": 386316111.57253265,
+                "total_bought": 376467401.5823364,
+                "total_sold": 388578120.7793884,
                 "quantity_buy": 0,
                 "quantity_sold": 0,
                 "recovery_bought": 0.0,
@@ -29404,10 +29344,10 @@
             "MMC": {
                 "price": 201.17999267578125,
                 "quantity": 0.0,
-                "total_bought": 576521668.1949158,
-                "total_sold": 567772790.6694946,
+                "total_bought": 579897395.1747437,
+                "total_sold": 571097290.0484619,
                 "quantity_buy": 0,
-                "quantity_sold": 2822213.0,
+                "quantity_sold": 2838738.0,
                 "recovery_bought": 0.0,
                 "return_stock_selling": -0.015175279626200001
             }

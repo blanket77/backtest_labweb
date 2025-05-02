@@ -5,7 +5,7 @@
 필요한 종속성을 설치하려면 다음 명령어를 실행하십시오:
 ```bash
 pip install -r requirements.txt
-
+python version 3.10.10 
 
 ## 가상환경
 myproject 작업환경에서 명령 프롬프트에서 아래와 같은 명령어를 입력한다.
